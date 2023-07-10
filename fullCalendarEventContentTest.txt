@@ -1,0 +1,12 @@
+            eventContent={(arg) => {
+              var event = arg.event;
+
+              var customHtml = `
+                <div style="flex-direction: column;display: flex">
+                  <span>${event.title}</span>
+                  <span>${event.extendedProps.order.teams.map(t => t.name)}</span>
+                </div>
+              `
+
+              return { html: customHtml }
+            }}

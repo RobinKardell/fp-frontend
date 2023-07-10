@@ -1,0 +1,81 @@
+{
+  "name": "theresas-frontend",
+  "author": {
+    "name": "Robin Kardell",
+    "company": "Webvancy AB",
+    "email": "robin@webvancy.com"
+  },
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@chakra-ui/icons": "^2.0.11",
+    "@chakra-ui/react": "^2.5.1",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@fontsource/roboto": "^4.5.8",
+    "@fullcalendar/bootstrap5": "^5.11.3",
+    "@fullcalendar/core": "^5.11.3",
+    "@fullcalendar/daygrid": "^5.11.3",
+    "@fullcalendar/interaction": "^5.11.3",
+    "@fullcalendar/list": "^5.11.3",
+    "@fullcalendar/react": "^5.11.2",
+    "@fullcalendar/timegrid": "^5.11.3",
+    "@react-pdf/renderer": "^3.1.7",
+    "axios": "0.27.2",
+    "bootstrap": "^5.2.1",
+    "bootstrap-icons": "^1.9.1",
+    "chakra-color-picker": "^0.0.6",
+    "chakra-paginator": "^0.7.3",
+    "chakra-react-select": "^4.4.0",
+    "date-fns": "^2.29.3",
+    "dayzed": "^3.2.3",
+    "formik": "^2.2.9",
+    "framer-motion": "^7.10.3",
+    "immutability-helper": "^3.1.1",
+    "jwt-decode": "^3.1.2",
+    "leaflet": "^1.9.3",
+    "moment": "^2.29.4",
+    "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
+    "react-datetime-picker": "^4.0.1",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.4.0",
+    "react-leaflet": "^4.2.1",
+    "react-pdf": "^6.2.2",
+    "react-router-dom": "^6.4.1",
+    "react-scripts": "^5.0.1",
+    "react-table": "^7.8.0",
+    "rrule": "^2.7.1",
+    "styled-components": "^5.3.6",
+    "use-file-picker": "^1.5.1",
+    "use-react-router-breadcrumbs": "^4.0.0",
+    "web-vitals": "^2.1.4",
+    "yup": "^0.32.11"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

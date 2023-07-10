@@ -1,0 +1,34 @@
+                    <SimpleGrid columns={{ sm: "1", md: "2" }} gap="2">
+                      {[1, 2, 3, 4].map(number => (
+                        <Box key={number} cursor="pointer" boxShadow="base" bg="white" rounded="xl" p="4">
+                          <Stack>
+                            <Box>
+                              <Skeleton>
+                                <Text fontWeight="semibold" fontSize="xl">Webvancy</Text>
+                              </Skeleton>
+                            </Box>
+                            <Flex align="center">
+                              <Skeleton>
+                                <HiOutlineOfficeBuilding size="22"/> <HiOutlineHome size="22"/>
+                                <Text ml="1.5" fontSize="md">Företag / Privatperson</Text>
+                              </Skeleton>
+                            </Flex>
+                            <Flex align="center">
+                              <Skeleton>
+                                <HiOutlineMail size="22" />
+                                <Text ml="1.5" fontSize="md">support@webvancy.com</Text>
+                              </Skeleton>
+                            </Flex>
+                            <Flex align="center">
+                              <Skeleton>
+                                <HiOutlinePhone size="22" />
+                                <Text ml="1.5" fontSize="md">+46707294610</Text>
+                              </Skeleton>
+                            </Flex>
+                            <Skeleton>
+                              <Button size={"sm"}>Ändra</Button>
+                            </Skeleton>
+                          </Stack>
+                        </Box>
+                      ))}
+                    </SimpleGrid>
