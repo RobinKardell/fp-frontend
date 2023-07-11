@@ -8,6 +8,7 @@ import { HiOutlineSwitchHorizontal } from "react-icons/hi";
 import AddArticleRow from "./add.article.row";
 import EditArtikelForm from "../settings/edit.artikel.from";
 import EditArticleRow from "./edit.article.row";
+
 function OrderView(props) {
     const [fromCity, setFromCity] = useState("Från")
     const [toCity, setToCity] = useState("Till")
@@ -92,7 +93,7 @@ function OrderView(props) {
     }
     useEffect(() => {
         getArticels()
-    }, [])
+    }, []);
 
     const [selectedRow, setSelectedRow] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);

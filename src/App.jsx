@@ -17,7 +17,7 @@ import Customer from "./views/customer";
 import Order from "./views/order";
 import Scheduler from "./views/scheduler";
 import Schedule from "./views/schedule";
-import TimeReport from "./views/timereport"
+import TimeReport from "./views/timereport";
 import TimeStamp from "./views/timeStamp";
 import DriveJournal from "./views/drivejournal";
 import { Roles } from "./components/roles";
@@ -41,16 +41,25 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-
         {/* Public Routes */}
         <Route path="login" element={<Login />} />
         <Route path="unauthorized" element={<Unauthorized />} />
 
-
         {/* Protected Routes
         <Route element={<PersistLogin />}> */}
         {/* Protected either Admin or Employee */}
-        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Employee, ROLES.Admin, ROLES.Leader]} />}>
+        <Route
+          element={
+            <RequireAuth
+              allowedRoles={[
+                ROLES.User,
+                ROLES.Employee,
+                ROLES.Admin,
+                ROLES.Leader,
+              ]}
+            />
+          }
+        >
           <Route element={<DashboardLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/schedule" element={<Schedule />} />
@@ -62,7 +71,11 @@ function App() {
             <Route path="/pdf" element={<Pdfv />} />
 
             {/* Protected Admin Routes */}
-            <Route element={<RequireAuth allowedRoles={[ROLES.Leader, ROLES.Admin]} />}>
+            <Route
+              element={
+                <RequireAuth allowedRoles={[ROLES.Leader, ROLES.Admin]} />
+              }
+            >
               <Route path="/scheduler" element={<Scheduler />} />
               <Route path="/scheduler3" element={<Scheduler3 />} />
               <Route path="/orders" element={<Orders />} />
@@ -75,12 +88,11 @@ function App() {
               <Route path="/stats" element={<Stats />} />
               <Route path="/timereport/:id" element={<TimeStamp />} />
               <Route path="/settings" element={<Settings />} />
-            <Route path="/inspections" element={<Inspections />} />
+              <Route path="/inspections" element={<Inspections />} />
               <Route path="/orders/new" element={<NewOrder />} />
               <Route path="/vehicles" element={<Vehicles />} />
               <Route path="/vehicle/:regnr" element={<Vehicle />} />
             </Route>
-            
 
             <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
               <Route path="/employees" element={<Employees />} />
@@ -88,12 +100,17 @@ function App() {
             </Route>
 
             {/* Protected Employee Routes */}
-
           </Route>
         </Route>
       </Route>
 
-      <Route element={<RequireAuth allowedRoles={[ROLES.Employee, ROLES.Admin, ROLES.Leader]} />}>
+      <Route
+        element={
+          <RequireAuth
+            allowedRoles={[ROLES.Employee, ROLES.Admin, ROLES.Leader]}
+          />
+        }
+      >
         <Route path="/dashboard" element={<DashboardLayout />} />
       </Route>
 

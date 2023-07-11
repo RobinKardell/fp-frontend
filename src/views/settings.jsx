@@ -22,7 +22,6 @@ function Settings() {
     const [products, setProducts] = useState();
     const [articels, setArticels] = useState();
 
-
     const getProducts = async () => {
         const response = await API.getThings();
         setProducts(response.things)
