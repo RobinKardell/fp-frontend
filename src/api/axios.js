@@ -7,15 +7,14 @@ import axios from "axios";
 const BASE_URL = "https://api.autofriendz.com/";
 
 export default axios.create({
-    baseURL: BASE_URL
+  baseURL: BASE_URL,
 });
 
 const token = localStorage.getItem("token");
-export const axiosPrivate = axios.create({    
-    baseURL: BASE_URL,
-    headers: { 
-        "token": token,
-        "Content-Type": "application/json", 
-    },
-})
-
+export const axiosPrivate = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    token: token,
+    "Content-Type": "application/json",
+  },
+});

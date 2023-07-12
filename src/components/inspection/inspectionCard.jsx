@@ -11,6 +11,7 @@ import {
 import { set } from "date-fns/esm";
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import * as API from "../../api/api";
+
 function InspectionCard(props) {
   const { volym, create, close, getList, edit, Eid, select } = props;
   const [inSpecList, setInspecList] = useState();

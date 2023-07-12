@@ -31,7 +31,6 @@ import { useState, useEffect } from "react";
 import * as API from "../../api/api";
 
 import { DeleteIcon, ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
-
 import { HiOutlineSwitchHorizontal } from "react-icons/hi";
 import AddArticleRow from "./add.article.row";
 import EditArtikelForm from "../settings/edit.artikel.from";
@@ -164,7 +163,7 @@ function OrderView(props) {
         <Flex>
           <Box flex={"1"} px="2">
             <FormControl>
-              <FormLabel>Flyttdag </FormLabel>
+              <FormLabel>Flyttdag</FormLabel>
               <Input
                 border="1px solid black"
                 type="datetime-local"

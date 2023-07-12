@@ -1,57 +1,82 @@
-import { useMediaQuery, Flex, Box, useDisclosure } from '@chakra-ui/react';
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import { useEffect, useState, useRef } from 'react';
-import "../FullCalendarStyle.css"
-import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import moment from 'moment';
-import DeleteBookingModal from '../components/schedule/delete.booking';
-import InfoBookingModal from '../components/schedule/info.booking';
-import EditBookingModal from '../components/schedule/edit.booking';
-import CalendarNavigation from "../components/schedule/calendar.navigation"
+import { useMediaQuery, Flex, Box, useDisclosure } from "@chakra-ui/react";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import { useEffect, useState, useRef } from "react";
+import "../FullCalendarStyle.css";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import moment from "moment";
+import DeleteBookingModal from "../components/schedule/delete.booking";
+import InfoBookingModal from "../components/schedule/info.booking";
+import EditBookingModal from "../components/schedule/edit.booking";
+import CalendarNavigation from "../components/schedule/calendar.navigation";
 import * as API from "../api/api";
 
 function Schedule() {
-  const [isMobile] = useMediaQuery("(max-width: 1068px)")
-  const [isDesktop] = useMediaQuery("(min-width: 1069px)")
+  const [isMobile] = useMediaQuery("(max-width: 1068px)");
+  const [isDesktop] = useMediaQuery("(min-width: 1069px)");
   const calendarRef = useRef();
-  const { isOpen: infoModalIsOpen, onOpen: infoModalOnOpen, onClose: infoModalOnClose } = useDisclosure()
-  const { isOpen: editModalIsOpen, onOpen: editModalOnOpen, onClose: editModalOnClose } = useDisclosure()
-  const { isOpen: deleteModalIsOpen, onOpen: deleteModalOnOpen, onClose: deleteModalOnClose } = useDisclosure()
+  const {
+    isOpen: infoModalIsOpen,
+    onOpen: infoModalOnOpen,
+    onClose: infoModalOnClose,
+  } = useDisclosure();
+  const {
+    isOpen: editModalIsOpen,
+    onOpen: editModalOnOpen,
+    onClose: editModalOnClose,
+  } = useDisclosure();
+  const {
+    isOpen: deleteModalIsOpen,
+    onOpen: deleteModalOnOpen,
+    onClose: deleteModalOnClose,
+  } = useDisclosure();
   const [clickedEvent, setClickedEvent] = useState({});
-  const [clickedEventEdit, setClickedEventEdit] = useState({})
+  const [clickedEventEdit, setClickedEventEdit] = useState({});
   const [currentTitle, setCurrentTitle] = useState("");
   const [currentView, setCurrentView] = useState("timeGridDay");
   const [currentDate, setCurrentDate] = useState(moment().format("YYYY-MM-DD"));
-  const [dateRangeInView, setDateRangeInView] = useState({ start: null, end: null });
+  const [dateRangeInView, setDateRangeInView] = useState({
+    start: null,
+    end: null,
+  });
   const [bookings, setBookings] = useState([]);
 
   //Calendar Navigation
-  const handleSetCurrentDate = (e) => { const newDate = moment(e.target.value).format("YYYY-MM-DD"); calendarRef.current.getApi().gotoDate(newDate); }
-  const goToNext = () => { calendarRef.current.getApi().next(); }
-  const goToPrev = () => { calendarRef.current.getApi().prev(); }
+  const handleSetCurrentDate = (e) => {
+    const newDate = moment(e.target.value).format("YYYY-MM-DD");
+    calendarRef.current.getApi().gotoDate(newDate);
+  };
+  const goToNext = () => {
+    calendarRef.current.getApi().next();
+  };
+  const goToPrev = () => {
+    calendarRef.current.getApi().prev();
+  };
 
   useEffect(() => {
-    calendarRef.current.getApi().changeView(currentView)
-  }, [currentView])
+    calendarRef.current.getApi().changeView(currentView);
+  }, [currentView]);
 
   //Fetch the events for the current calendar view
   const fetchBookingsInView = async () => {
-    const response = await API.getBookingSelf()
-    setBookings(response.data)
-  }
+    const response = await API.getBookingSelf();
+    setBookings(response.data);
+  };
 
   useEffect(() => {
     if (dateRangeInView.start && dateRangeInView.end) {
       fetchBookingsInView();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dateRangeInView])
+  }, [dateRangeInView]);
 
   //Event Click
-  const handleEventClick = (clickInfo) => { setClickedEvent(clickInfo.event); infoModalOnOpen(); }
+  const handleEventClick = (clickInfo) => {
+    setClickedEvent(clickInfo.event);
+    infoModalOnOpen();
+  };
 
   /* Edit Booking */
   const openEditModal = () => {
@@ -60,31 +85,49 @@ function Schedule() {
       start: moment(clickedEvent.start).format("YYYY-MM-DD[T]HH:mm:ss"),
       end: moment(clickedEvent.end).format("YYYY-MM-DD[T]HH:mm:ss"),
       color: clickedEvent.backgroundColor,
-      customer: {label: clickedEvent.extendedProps.customer.name, value: clickedEvent.extendedProps.customer.id},
-      users: clickedEvent.extendedProps.users.map(u => ({label: u.firstName + " " + u.lastName, value: u.id})),
-      teams: clickedEvent.extendedProps.teams.map(t => ({label: t.name, value: t.id})),
+      customer: {
+        label: clickedEvent.extendedProps.customer.name,
+        value: clickedEvent.extendedProps.customer.id,
+      },
+      users: clickedEvent.extendedProps.users.map((u) => ({
+        label: u.firstName + " " + u.lastName,
+        value: u.id,
+      })),
+      teams: clickedEvent.extendedProps.teams.map((t) => ({
+        label: t.name,
+        value: t.id,
+      })),
       notes: clickedEvent.extendedProps.notes,
       clockedin: clickedEvent.clockedin,
       clockedout: clickedEvent.clockedout,
-    })
+    });
     infoModalOnClose();
     editModalOnOpen();
-  }
-  
-  const closeEditModal = () => { editModalOnClose(); infoModalOnOpen(); setClickedEventEdit({}) }
+  };
+
+  const closeEditModal = () => {
+    editModalOnClose();
+    infoModalOnOpen();
+    setClickedEventEdit({});
+  };
 
   const timeReport = async () => {
     const times = {
       id: clickedEvent.id,
-      in: (clickedEvent.extendedProps.clockedin === null)?new Date(Date.now()):clickedEvent.extendedProps.clockedin,
-      out: (clickedEvent.extendedProps.clockedout === null)?new Date(Date.now()):clickedEvent.extendedProps.clockedout
-    }
-      //console.log('timereoport ', clickedEvent.extendedProps.clockedout);
-      await API.logTime(times);
-      await fetchBookingsInView();
-      infoModalOnClose();
-  }
-
+      in:
+        clickedEvent.extendedProps.clockedin === null
+          ? new Date(Date.now())
+          : clickedEvent.extendedProps.clockedin,
+      out:
+        clickedEvent.extendedProps.clockedout === null
+          ? new Date(Date.now())
+          : clickedEvent.extendedProps.clockedout,
+    };
+    //console.log('timereoport ', clickedEvent.extendedProps.clockedout);
+    await API.logTime(times);
+    await fetchBookingsInView();
+    infoModalOnClose();
+  };
 
   const updateBooking = async () => {
     const objectToPatch = {
@@ -94,18 +137,24 @@ function Schedule() {
       color: clickedEventEdit.color,
       notes: clickedEventEdit.notes,
       customerId: clickedEventEdit.customer.value,
-      userIds: clickedEventEdit.users.map(u => u.value),
-      teamIds: clickedEventEdit.teams.map(t => t.value),
-    }
+      userIds: clickedEventEdit.users.map((u) => u.value),
+      teamIds: clickedEventEdit.teams.map((t) => t.value),
+    };
     //await axiosPrivate.put("/Booking", objectToPatch)
     await fetchBookingsInView();
-    editModalOnClose(); 
-  }
+    editModalOnClose();
+  };
   /* Edit Booking End */
 
   /* Delete Booking */
-  const openDeleteModal = () => { infoModalOnClose(); deleteModalOnOpen(); }
-  const closeDeleteModal = () => { deleteModalOnClose(); infoModalOnOpen(); }
+  const openDeleteModal = () => {
+    infoModalOnClose();
+    deleteModalOnOpen();
+  };
+  const closeDeleteModal = () => {
+    deleteModalOnClose();
+    infoModalOnOpen();
+  };
   //const deleteBooking = async () => { await axiosPrivate.delete(`/Booking/${clickedEvent.id}`); await fetchBookingsInView(); deleteModalOnClose(); }
   /* Delete Booking End */
 
@@ -113,11 +162,7 @@ function Schedule() {
     <>
       <Flex direction="column" flex="1" overflow="auto" p="2">
         <Box flex="1" p="2" rounded="xl" h="full">
-          <Box
-            h="full"
-            as="section"
-            mx="auto"
-          >
+          <Box h="full" as="section" mx="auto">
             <CalendarNavigation
               currentTitle={currentTitle}
               currentDate={currentDate}
@@ -128,7 +173,6 @@ function Schedule() {
               goToPrev={goToPrev}
               isDesktop={isDesktop}
               isMobile={isMobile}
-
             />
             <Box h="full" bg={"gray.100"}>
               <FullCalendar
@@ -148,16 +192,19 @@ function Schedule() {
                 //slotMaxTime={"21:00"}
                 slotDuration={"00:30:00"}
                 slotLabelFormat={{
-                  hour: '2-digit',
-                  minute: '2-digit',
+                  hour: "2-digit",
+                  minute: "2-digit",
                 }}
                 plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                 initialView={currentView}
                 firstDay={1}
                 datesSet={(args) => {
-                  setDateRangeInView({ start: new Date(args.start).toISOString(), end: new Date(args.end).toISOString() });
-                  setCurrentDate(moment(args.start).format("YYYY-MM-DD"))
-                  setCurrentTitle(args.view.title)
+                  setDateRangeInView({
+                    start: new Date(args.start).toISOString(),
+                    end: new Date(args.end).toISOString(),
+                  });
+                  setCurrentDate(moment(args.start).format("YYYY-MM-DD"));
+                  setCurrentTitle(args.view.title);
                 }}
                 allDayText={"Heldag"}
                 headerToolbar={false}
@@ -165,14 +212,14 @@ function Schedule() {
                   today: "Idag",
                   month: "Månad",
                   week: "Vecka",
-                  day: "Dag"
+                  day: "Dag",
                 }}
               />
             </Box>
           </Box>
         </Box>
       </Flex>
-      
+
       {/* Modals */}
       <InfoBookingModal
         event={clickedEvent}
@@ -185,7 +232,7 @@ function Schedule() {
       />
       {/* Modals End */}
     </>
-  )
+  );
 }
 
-export default Schedule
+export default Schedule;

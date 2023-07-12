@@ -52,7 +52,6 @@ function AddArticleRow(props) {
     setInputValue(product.name); // Update input field with selected product name
     setIsOpen1(false);
   };
-  console.log("selectedProduct: ", selectedProduct);
 
   const handleStartTimeChange = (event) => {
     setFromTime(event.target.value);
@@ -63,6 +62,7 @@ function AddArticleRow(props) {
     setToTime(event.target.value);
     updateTimeDifference(fromTime, event.target.value);
   };
+
   /* const handleFromTimeChange = (event) => {
             const newFromTime = event.target.value;
             setFromTime(newFromTime);
@@ -169,6 +169,7 @@ function AddArticleRow(props) {
             <ModalHeader borderBottom={"1px"}>Lägg till resurs</ModalHeader>
             <ModalBody>
               <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+                
                 {/* <Input
                     value={inputValue}
                     onChange={handleInputChange}
@@ -214,7 +215,6 @@ function AddArticleRow(props) {
                 <Box maxHeight="500px" overflowY="scroll">
                   <List>
                     {articels.map((articel, index) => {
-                      console.log("articel: ", articel);
                       return (
                         <>
                           <ListItem

@@ -1,6 +1,16 @@
-import React, { useState } from 'react';
-import { PDFViewer, PDFDownloadLink, Page, Text, View, Document, StyleSheet, Font, Image } from '@react-pdf/renderer';
-import { FormControl, FormLabel, Input, Button, Stack } from '@chakra-ui/react';
+import React, { useState } from "react";
+import {
+  PDFViewer,
+  PDFDownloadLink,
+  Page,
+  Text,
+  View,
+  Document,
+  StyleSheet,
+  Font,
+  Image,
+} from "@react-pdf/renderer";
+import { FormControl, FormLabel, Input, Button, Stack } from "@chakra-ui/react";
 
 // Ladda in en extern typsnitt
 //Font.register({ family: 'Roboto', src: 'https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu4mxM.woff2' });
@@ -16,14 +26,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   logo: {
-    width: '100%',
+    width: "100%",
     height: 100,
     marginBottom: 10,
   },
 });
 
 // Skapa PDF-komponenten
-const MyDocument = ({ name, age,coment }) => (
+const MyDocument = ({ name, age, coment }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
@@ -41,13 +51,13 @@ const MyDocument = ({ name, age,coment }) => (
 
 // Skapa en formulärkomponent för att mata in data
 const MyForm = ({ onSubmit }) => {
-  const [name, setName] = useState('');
-  const [age, setAge] = useState('');
-  const [coment, setComent] = useState('');
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+  const [coment, setComent] = useState("");
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    onSubmit({ name, age,coment });
+    onSubmit({ name, age, coment });
   };
 
   return (
@@ -55,7 +65,10 @@ const MyForm = ({ onSubmit }) => {
       <Stack spacing={3}>
         <FormControl id="name">
           <FormLabel>Namn</FormLabel>
-          <Input value={name} onChange={(event) => setName(event.target.value)} />
+          <Input
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+          />
         </FormControl>
         <FormControl id="age">
           <FormLabel>Ålder</FormLabel>
@@ -63,7 +76,10 @@ const MyForm = ({ onSubmit }) => {
         </FormControl>
         <FormControl id="Comment">
           <FormLabel>KOmmmerntar varför du gilalr ost</FormLabel>
-          <Input value={coment} onChange={(event) => setComent(event.target.value)} />
+          <Input
+            value={coment}
+            onChange={(event) => setComent(event.target.value)}
+          />
         </FormControl>
         <Button type="submit">Ladda ner PDF</Button>
       </Stack>
@@ -87,8 +103,11 @@ const Pdfv = () => {
           <PDFViewer width="100%" height={500}>
             <MyDocument {...data} />
           </PDFViewer>
-          <PDFDownloadLink document={<MyDocument {...data} />} fileName="personuppgifter.pdf">
-            {({ loading }) => (loading ? 'Laddar ner PDF...' : 'Ladda ner PDF')}
+          <PDFDownloadLink
+            document={<MyDocument {...data} />}
+            fileName="personuppgifter.pdf"
+          >
+            {({ loading }) => (loading ? "Laddar ner PDF..." : "Ladda ner PDF")}
           </PDFDownloadLink>
         </>
       )}
@@ -96,4 +115,4 @@ const Pdfv = () => {
   );
 };
 
-export default Pdfv
+export default Pdfv;

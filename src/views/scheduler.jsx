@@ -1,31 +1,69 @@
-import { useMediaQuery, Flex, Box, useDisclosure, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, ModalCloseButton, Button, Stack, FormControl, Input, Select, FormLabel } from '@chakra-ui/react';
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import { useEffect, useState, useRef } from 'react';
-import "../FullCalendarStyle.css"
+import {
+  useMediaQuery,
+  Flex,
+  Box,
+  useDisclosure,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+  ModalCloseButton,
+  Button,
+  Stack,
+  FormControl,
+  Input,
+  Select,
+  FormLabel,
+} from "@chakra-ui/react";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import { useEffect, useState, useRef } from "react";
+import "../FullCalendarStyle.css";
 import * as API from "../api/api";
-import moment from 'moment';
-import DeleteBookingModal from '../components/scheduler/delete.booking';
-import InfoBookingModal from '../components/scheduler/info.booking';
-import EditBookingModal from '../components/scheduler/edit.booking';
-import CalendarNavigation from "../components/scheduler/calendar.navigation"
+import moment from "moment";
+import DeleteBookingModal from "../components/scheduler/delete.booking";
+import InfoBookingModal from "../components/scheduler/info.booking";
+import EditBookingModal from "../components/scheduler/edit.booking";
+import CalendarNavigation from "../components/scheduler/calendar.navigation";
 
 function Scheduler() {
-  const [isMobile] = useMediaQuery("(max-width: 1068px)")
-  const [isDesktop] = useMediaQuery("(min-width: 1069px)")
+  const [isMobile] = useMediaQuery("(max-width: 1068px)");
+  const [isDesktop] = useMediaQuery("(min-width: 1069px)");
   const calendarRef = useRef();
-  const { isOpen: infoModalIsOpen, onOpen: infoModalOnOpen, onClose: infoModalOnClose } = useDisclosure()
-  const { isOpen: editModalIsOpen, onOpen: editModalOnOpen, onClose: editModalOnClose } = useDisclosure()
-  const { isOpen: deleteModalIsOpen, onOpen: deleteModalOnOpen, onClose: deleteModalOnClose } = useDisclosure()
-  const { isOpen: filterModalIsOpen, onOpen: filterModalOnOpen, onClose: filterModalOnClose } = useDisclosure()
+  const {
+    isOpen: infoModalIsOpen,
+    onOpen: infoModalOnOpen,
+    onClose: infoModalOnClose,
+  } = useDisclosure();
+  const {
+    isOpen: editModalIsOpen,
+    onOpen: editModalOnOpen,
+    onClose: editModalOnClose,
+  } = useDisclosure();
+  const {
+    isOpen: deleteModalIsOpen,
+    onOpen: deleteModalOnOpen,
+    onClose: deleteModalOnClose,
+  } = useDisclosure();
+  const {
+    isOpen: filterModalIsOpen,
+    onOpen: filterModalOnOpen,
+    onClose: filterModalOnClose,
+  } = useDisclosure();
   const [clickedEvent, setClickedEvent] = useState({});
-  const [clickedEventEdit, setClickedEventEdit] = useState({})
+  const [clickedEventEdit, setClickedEventEdit] = useState({});
   const [currentTitle, setCurrentTitle] = useState("");
   const [currentView, setCurrentView] = useState("timeGridWeek");
   const [currentDate, setCurrentDate] = useState(moment().format("YYYY-MM-DD"));
-  const [dateRangeInView, setDateRangeInView] = useState({ start: null, end: null });
+  const [dateRangeInView, setDateRangeInView] = useState({
+    start: null,
+    end: null,
+  });
   const [bookings, setBookings] = useState([]);
   const [orders, setOrders] = useState([]);
   const [Remployees, setEmployees] = useState([]);
@@ -33,39 +71,46 @@ function Scheduler() {
   const [Rcustomers, setCustomers] = useState([]);
 
   //Calendar Navigation
-  const handleSetCurrentDate = (e) => { const newDate = moment(e.target.value).format("YYYY-MM-DD"); calendarRef.current.getApi().gotoDate(newDate); }
-  const goToNext = () => { calendarRef.current.getApi().next(); }
-  const goToPrev = () => { calendarRef.current.getApi().prev(); }
+  const handleSetCurrentDate = (e) => {
+    const newDate = moment(e.target.value).format("YYYY-MM-DD");
+    calendarRef.current.getApi().gotoDate(newDate);
+  };
+  const goToNext = () => {
+    calendarRef.current.getApi().next();
+  };
+  const goToPrev = () => {
+    calendarRef.current.getApi().prev();
+  };
 
   useEffect(() => {
-    calendarRef.current.getApi().changeView(currentView)
-  }, [currentView])
+    calendarRef.current.getApi().changeView(currentView);
+  }, [currentView]);
 
   //Fetch the events for the current calendar view
   const fetchBookingsInView = async () => {
-    console.log("Sök: " ,searchFilter);
-    const response = await API.getBooking(searchFilter)
+    console.log("Sök: ", searchFilter);
+    const response = await API.getBooking(searchFilter);
     setBookings(response.data);
-    console.log(response.data)
-  }
+    console.log(response.data);
+  };
 
   useEffect(() => {
     //if (dateRangeInView.start && dateRangeInView.end) {
     fetchBookingsInView();
-    
+
     getNeededFilterFormData();
     //}
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dateRangeInView])
+  }, [dateRangeInView]);
   const getNeededFilterFormData = async () => {
     const responseEmployees = await API.getUsers();
     const responseTeams = await API.getTeams();
-    const responseCustomers = await API.getClients()
+    const responseCustomers = await API.getClients();
 
-    setEmployees(responseEmployees.users)
-    setTeams(responseTeams.data)
-    setCustomers(responseCustomers.data)
-  }
+    setEmployees(responseEmployees.users);
+    setTeams(responseTeams.data);
+    setCustomers(responseCustomers.data);
+  };
 
   //Handle event dragged around!
   const handleEventChange = async (changeInfo) => {
@@ -75,19 +120,22 @@ function Scheduler() {
       start: changeInfo.event.start ? new Date(changeInfo.event.start) : null,
       end: changeInfo.event.end ? new Date(changeInfo.event.end) : null,
       allDay: changeInfo.event.allDay,
-    }
+    };
     //console.log("updte", updateMomentObject)
     try {
-      await API.updateTimeBooking(updateMomentObject)
+      await API.updateTimeBooking(updateMomentObject);
     } catch (err) {
-      console.log(err)
+      console.log(err);
     } finally {
       await fetchBookingsInView();
     }
-  }
+  };
 
   //Event Click
-  const handleEventClick = (clickInfo) => {setClickedEvent(clickInfo.event); infoModalOnOpen(); }
+  const handleEventClick = (clickInfo) => {
+    setClickedEvent(clickInfo.event);
+    infoModalOnOpen();
+  };
 
   /* Edit Booking */
   const openEditModal = () => {
@@ -97,40 +145,61 @@ function Scheduler() {
       start: moment(clickedEvent.start).format("YYYY-MM-DD[T]HH:mm:ss"),
       end: moment(clickedEvent.end).format("YYYY-MM-DD[T]HH:mm:ss"),
       color: clickedEvent.backgroundColor,
-      customer: { label: clickedEvent.extendedProps.customer.name, value: clickedEvent.extendedProps.customer.id },
-      users: clickedEvent.extendedProps.users.map(u => ({ label: u.firstname + " " + u.lastname, value: u.id })),
-      teams: clickedEvent.extendedProps.team.map(t => ({ label: t.Name, value: t.id })),
-      notes: clickedEvent.extendedProps.notes
-    })
+      customer: {
+        label: clickedEvent.extendedProps.customer.name,
+        value: clickedEvent.extendedProps.customer.id,
+      },
+      users: clickedEvent.extendedProps.users.map((u) => ({
+        label: u.firstname + " " + u.lastname,
+        value: u.id,
+      })),
+      teams: clickedEvent.extendedProps.team.map((t) => ({
+        label: t.Name,
+        value: t.id,
+      })),
+      notes: clickedEvent.extendedProps.notes,
+    });
     infoModalOnClose();
     editModalOnOpen();
-  }
+  };
 
-  const closeEditModal = () => { editModalOnClose(); infoModalOnOpen(); setClickedEventEdit({}) }
+  const closeEditModal = () => {
+    editModalOnClose();
+    infoModalOnOpen();
+    setClickedEventEdit({});
+  };
 
   const updateBooking = async () => {
-
     const objectToPatch = {
       id: clickedEventEdit.id,
       start: new Date(clickedEventEdit.start),
       end: new Date(clickedEventEdit.end),
       color: clickedEventEdit.color,
       notes: clickedEventEdit.notes,
-      userIds: clickedEventEdit.users?.map(u => u.value),
-      teamIds: clickedEventEdit.teams?.map(t => t.value),
-    }
-    await API.updateBooking(objectToPatch)
+      userIds: clickedEventEdit.users?.map((u) => u.value),
+      teamIds: clickedEventEdit.teams?.map((t) => t.value),
+    };
+    await API.updateBooking(objectToPatch);
     await fetchBookingsInView();
     editModalOnClose();
-  }
+  };
   /* Edit Booking End */
 
   /* Delete Booking */
-  const openDeleteModal = () => { infoModalOnClose(); deleteModalOnOpen(); }
-  const closeDeleteModal = () => { deleteModalOnClose(); infoModalOnOpen(); }
-  const deleteBooking = async () => { await API.deleteBooking(clickedEvent.id); await fetchBookingsInView(); deleteModalOnClose(); }
+  const openDeleteModal = () => {
+    infoModalOnClose();
+    deleteModalOnOpen();
+  };
+  const closeDeleteModal = () => {
+    deleteModalOnClose();
+    infoModalOnOpen();
+  };
+  const deleteBooking = async () => {
+    await API.deleteBooking(clickedEvent.id);
+    await fetchBookingsInView();
+    deleteModalOnClose();
+  };
   /* Delete Booking End */
-
 
   /*filter*/
   const [searchFilter, setSearchFilter] = useState({
@@ -139,11 +208,11 @@ function Scheduler() {
     teams: "",
     users: "",
     business: "",
-  })
+  });
   const handleFilterChange = (e) => {
-    console.log("event ",e.target.name)
-    setSearchFilter({ ...searchFilter, [e.target.name]: e.target.value })
-  }
+    console.log("event ", e.target.name);
+    setSearchFilter({ ...searchFilter, [e.target.name]: e.target.value });
+  };
 
   const clearFilter = () => {
     setSearchFilter({
@@ -152,18 +221,13 @@ function Scheduler() {
       teams: "",
       users: "",
       business: "",
-    })
-    
-  }
+    });
+  };
   return (
     <>
       <Flex direction="column" flex="1" overflow="auto" p="2">
         <Box flex="1" p="2" rounded="xl" h="full">
-          <Box
-            h="full"
-            as="section"
-            mx="auto"
-          >
+          <Box h="full" as="section" mx="auto">
             <CalendarNavigation
               currentTitle={currentTitle}
               currentDate={currentDate}
@@ -201,7 +265,7 @@ function Scheduler() {
                 datesSet={(args) => {
                   //setDateRangeInView({ start: new Date(args.start), end: new Date(args.end) });
                   //setCurrentDate(moment(args.start).format("YYYY-MM-DD"))
-                  setCurrentTitle(args.view.title)
+                  setCurrentTitle(args.view.title);
                 }}
                 //allDayText={"Heldag"}
                 headerToolbar={false}
@@ -209,7 +273,7 @@ function Scheduler() {
                   today: "Idag",
                   month: "Månad",
                   week: "Vecka",
-                  day: "Dag"
+                  day: "Dag",
                 }}
               />
             </Box>
@@ -227,7 +291,13 @@ function Scheduler() {
               <FormControl>
                 <FormLabel>Namn</FormLabel>
                 {/*<Input name="name" value={searchFilter.name} onChange={(e) => handleFilterChange(e)} placeholder="Sök på namn på bokning" />*/}
-                <Input name="name" value={searchFilter.name} onChange={(e) => setSearchFilter({ ...searchFilter, name: e.target.value })} />
+                <Input
+                  name="name"
+                  value={searchFilter.name}
+                  onChange={(e) =>
+                    setSearchFilter({ ...searchFilter, name: e.target.value })
+                  }
+                />
               </FormControl>
               <FormControl>
                 <FormLabel>Kund</FormLabel>
@@ -235,17 +305,16 @@ function Scheduler() {
                   value={searchFilter.customer}
                   onChange={(e) => handleFilterChange(e)}
                   menuPortalTarget={document.body}
-                  menuPosition={'fixed'}
+                  menuPosition={"fixed"}
                   styles={{ zIndex: 1000 }}
                   name="customer"
                   focusBorderColor={"brand.primary"}
                   selectedOptionColor={"brand"}
                   size="md"
-
-                  placeholder='Välj kund'
-                  >
-                  {Rcustomers.map(c => (
-                      <option value={c.id}>{c.Name}</option>
+                  placeholder="Välj kund"
+                >
+                  {Rcustomers.map((c) => (
+                    <option value={c.id}>{c.Name}</option>
                   ))}
                 </Select>
               </FormControl>
@@ -257,16 +326,16 @@ function Scheduler() {
                   //onChange={(e) => {console.log(e);setSearchFilter({ ...searchFilter, teams: e })}}
                   isMulti
                   menuPortalTarget={document.body}
-                  menuPosition={'fixed'}
+                  menuPosition={"fixed"}
                   styles={{ zIndex: 1000 }}
                   name="teams"
                   focusBorderColor={"brand.primary"}
                   selectedOptionColor={"brand"}
                   size="md"
-                  placeholder='Välj team'
+                  placeholder="Välj team"
                 >
-                  {Rteams.map(team => (
-                      <option value={team.id}>{team.Name}</option>
+                  {Rteams.map((team) => (
+                    <option value={team.id}>{team.Name}</option>
                   ))}
                 </Select>
               </FormControl>
@@ -277,16 +346,18 @@ function Scheduler() {
                   onChange={(e) => handleFilterChange(e)}
                   isMulti
                   menuPortalTarget={document.body}
-                  menuPosition={'fixed'}
+                  menuPosition={"fixed"}
                   styles={{ zIndex: 1000 }}
                   name="users"
                   focusBorderColor={"brand.primary"}
                   selectedOptionColor={"brand"}
                   size="md"
-                  placeholder='Välj anställd'
+                  placeholder="Välj anställd"
                 >
-                  {Remployees.map(em => (
-                      <option value={em.id}>{em.firstname + " " + em.lastname}</option>
+                  {Remployees.map((em) => (
+                    <option value={em.id}>
+                      {em.firstname + " " + em.lastname}
+                    </option>
                   ))}
                 </Select>
               </FormControl>
@@ -298,8 +369,24 @@ function Scheduler() {
                   <option value="false">Privatperson</option>
                 </Select>
               </FormControl>*/}
-              <Button bg="brand.primary" textColor="white" onClick={() => { fetchBookingsInView() }}>Sök</Button>
-              <Button onClick={() => {console.log("rensa");clearFilter(); filterModalOnClose();}}>Rensa</Button>
+              <Button
+                bg="brand.primary"
+                textColor="white"
+                onClick={() => {
+                  fetchBookingsInView();
+                }}
+              >
+                Sök
+              </Button>
+              <Button
+                onClick={() => {
+                  console.log("rensa");
+                  clearFilter();
+                  filterModalOnClose();
+                }}
+              >
+                Rensa
+              </Button>
             </Stack>
           </ModalBody>
         </ModalContent>
@@ -335,9 +422,8 @@ function Scheduler() {
         onClose={deleteModalOnClose}
       />
       {/* Modals End */}
-
     </>
-  )
+  );
 }
 
-export default Scheduler
+export default Scheduler;
