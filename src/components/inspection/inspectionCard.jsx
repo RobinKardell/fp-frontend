@@ -7,6 +7,10 @@ import {
   Button,
   Card,
   Input,
+  Image,
+  Grid,
+  GridItem,
+  Center,
 } from "@chakra-ui/react";
 import { set } from "date-fns/esm";
 import React, { useState, useEffect, useCallback, useMemo } from "react";
@@ -14,7 +18,7 @@ import * as API from "../../api/api";
 
 function InspectionCard(props) {
   const { volym, create, close, getList, edit, Eid, select } = props;
-  const [inSpecList, setInspecList] = useState();
+  const [inSpecList, setInspecList] = useState([]);
   const [selected, setSelected] = useState(0);
   const [totalV, setTotalV] = useState(0);
   const [products, setProducts] = useState();
@@ -32,9 +36,11 @@ function InspectionCard(props) {
 
   const getInspecList = async () => {
     const response = await API.getInspectionList();
-    //console.log(response)
+    console.log("Response", response);
     setInspecList(response.data);
   };
+
+  // console.log("inSpecList", inSpecList);
 
   const getInspec = async () => {
     console.log("get");
@@ -58,6 +64,7 @@ function InspectionCard(props) {
   useEffect(() => {
     selected && seted();
   }, [selected]);
+
   /* useEffect(() => {
         if (selected !== 0) {
           seted();
@@ -172,78 +179,310 @@ function InspectionCard(props) {
 
   return (
     <>
-      <Heading>Besiktingsmall</Heading>
+      <Box
+        padding={"20px"}
+        // sx={{
+        //   "@media screen and (max-width: 1920px)": {
+        //     width: "500px",
+        //   },
+        // }}
+      >
+        <Heading>Besiktingsmall</Heading>
+        <Text my={"10px"}>Sammanfattning</Text>
 
-      {select && (
-        <>
-          <Select onChange={(e) => setSelected(e.target.value)}>
-            <option value="">Select a product</option>
-            {inSpecList &&
-              inSpecList.map((is, i) => (
-                <option value={is.Id}>
-                  {is.Id} {is.Name}
-                </option>
-              ))}
-          </Select>
-        </>
-      )}
-      <Input
-        value={inspectionName}
-        onChange={(e) => setInspectionName(e.target.value)}
-        type="text"
-      />
-      <Box flex={"1"}>
-        <Button onClick={addNewList}>Lägg till rum</Button>
-
-        <Flex>
-          {lists?.map((list, index) => (
-            <Card p={4} m={3} key={index}>
-              <h2>
-                {list.name}
-                <Button onClick={() => removeList(index)}>Ta bort rum</Button>
-              </h2>
-              {list.items.map((item, itemIndex) => (
-                <Card p="3" m="1" key={itemIndex}>
-                  {item.name} - {item.volume} m3 . Antal {item.count}
-                  <Button onClick={() => removeItem(index, itemIndex)}>
-                    Ta bort
-                  </Button>
-                </Card>
-              ))}
-              <p>
-                Total volym:{" "}
-                {list.items.reduce((acc, item) => acc + item.volume, 0)} m3
-              </p>
-              <Select
-                value={selectedProductId}
-                onChange={(event) => setSelectedProductId(event.target.value)}
-              >
-                <option value="">Select a product</option>
-                {products &&
-                  products.map((product, pi) => (
-                    <option value={product.id}>{product.name}</option>
-                  ))}
-              </Select>
-              <Button
-                disabled={!selectedProductId}
-                onClick={() => {
-                  addd(index, selectedProductId);
-                }}
-              >
-                Lägg till
-              </Button>
-            </Card>
-          ))}
+        {/* List Boxes */}
+        <Flex gap={"30px"} direction={{ base: "row", md: "row" }}>
+          <Box>
+            <Text fontSize="xl" fontWeight={"bold"}>
+              Kok
+            </Text>
+            <Text>1 Stolar</Text>
+            <Text>1 Kok</Text>
+            <Text>30 Kok</Text>
+          </Box>
+          <Box>
+            <Text fontSize="xl" fontWeight={"bold"}>
+              Kok
+            </Text>
+            <Text>1 Stolar</Text>
+            <Text>1 Kok</Text>
+            <Text>30 Kok</Text>
+          </Box>
+          <Box>
+            <Text fontSize="xl" fontWeight={"bold"}>
+              Kok
+            </Text>
+            <Text>1 Stolar</Text>
+            <Text>1 Kok</Text>
+            <Text>30 Kok</Text>
+          </Box>
+          <Box>
+            <Text fontSize="xl" fontWeight={"bold"}>
+              Kok
+            </Text>
+            <Text>1 Stolar</Text>
+            <Text>1 Kok</Text>
+            <Text>30 Kok</Text>
+          </Box>
         </Flex>
-        <p>Total volume across all lists: {totalVolume} m3</p>
-        {create && <Button onClick={SaveInspection}>Spara</Button>}
-        {edit && <Button onClick={EditInspection}>Uppdatera</Button>}
-      </Box>
-      <Box>
-        <Card>Antal Lastbilar: {trucks}</Card>
-        <Card>Antal chafförer: {trucks}</Card>
-        <Card>Antal expressarbetare: {expressWorker}</Card>
-        <Card>Antal PackMästare: {packMaster}</Card>
+
+        {/* Input and Image Upload */}
+        {/* <Flex
+          my={"10px"}
+          gap={"100px"}
+          alignItems={"center"}
+          // direction={{ base: "row", md: "column" }}
+        >
+          <Box>
+            <Text fontSize="md" fontWeight={"bold"}>
+              Totalt: 28m<sup>3</sup>
+            </Text>
+            <Flex
+              my={"10px"}
+              direction={{ base: "row", md: "column" }}
+              gap={"30px"}
+            >
+              <Flex gap={"20px"}>
+                <Button>Spare run</Button>
+                <Button>Spare run</Button>
+              </Flex>
+              <Flex direction={{ base: "row", md: "column" }}>
+                <Text
+                  borderTop={"1px solid black"}
+                  borderLeft={"1px solid black"}
+                  w={"auto"}
+                  pl={"10px"}
+                >
+                  Lagg till rum +
+                </Text>
+                <Select placeholder="Select option">
+                  <option value="option1">Option 1</option>
+                  <option value="option2">Option 2</option>
+                  <option value="option3">Option 3</option>
+                </Select>
+              </Flex>
+            </Flex>
+          </Box>
+          <Box>
+            <Input type="file" />
+          </Box>
+        </Flex> */}
+
+        <Flex
+          my={"10px"}
+          gap={"100px"}
+          alignItems={"center"}
+          direction={"row"}
+          sx={{
+            "@media screen and (max-width: 768px)": {
+              flexDirection: "column",
+            },
+          }}
+        >
+          <Box>
+            <Text fontSize="md" fontWeight={"bold"}>
+              Totalt: 28m<sup>3</sup>
+            </Text>
+            <Flex
+              my={"10px"}
+              direction={{ base: "column", md: "row" }}
+              gap={"30px"}
+            >
+              <Flex gap={"20px"}>
+                <Button>Save Room</Button>
+                <Button>Spare run</Button>
+              </Flex>
+              <Flex direction={{ base: "column", md: "row" }} gap={"20px"}>
+                <Text
+                  borderTop={"1px solid black"}
+                  borderLeft={"1px solid black"}
+                  w={"auto"}
+                  pl={"10px"}
+                >
+                  Add Room +
+                </Text>
+                <Select placeholder="Select Room">
+                  <option value="kok">kok</option>
+                  <option value="vardagsrum">vardagsrum</option>
+                  <option value="i lall">i lall</option>
+                  <option value="sovrum">sovrum</option>
+                  <option value="kallare">kallare</option>
+                </Select>
+              </Flex>
+            </Flex>
+          </Box>
+          <Box>
+            <Input type="file" />
+          </Box>
+        </Flex>
+
+        {/* Image Render Box */}
+        <Box my={"25px"}>
+          <Flex
+            direction={"row"}
+            gap={{ base: "50px", md: "25px" }}
+            sx={{
+              "@media screen and (max-width: 768px)": {
+                flexDirection: "column", // Update flex direction for the md breakpoint
+              },
+            }}
+          >
+            <Box width={"200px"}>
+              <Center
+                bg="gray"
+                h="100px"
+                color="white"
+                width={"200px"}
+                height={"150px"}
+              >
+                Köksbord
+              </Center>
+              <Flex
+                justifyContent={"space-between"}
+                my={"10px"}
+                alignItems={"center"}
+              >
+                <Button>-</Button>
+                <Text>0</Text>
+                <Button>+</Button>
+              </Flex>
+            </Box>
+            <Box width={"200px"}>
+              <Center
+                bg="gray"
+                h="100px"
+                color="white"
+                width={"200px"}
+                height={"150px"}
+              >
+                Stolar
+              </Center>
+              <Flex
+                justifyContent={"space-between"}
+                my={"10px"}
+                alignItems={"center"}
+              >
+                <Button>-</Button>
+                <Text>0</Text>
+                <Button>+</Button>
+              </Flex>
+            </Box>
+            <Box width={"200px"}>
+              <Center
+                bg="gray"
+                h="100px"
+                color="white"
+                width={"200px"}
+                height={"150px"}
+              >
+                Skåp
+              </Center>
+              <Flex
+                justifyContent={"space-between"}
+                my={"10px"}
+                alignItems={"center"}
+              >
+                <Button>-</Button>
+                <Text>0</Text>
+                <Button>+</Button>
+              </Flex>
+            </Box>
+            <Box width={"200px"}>
+              <Center
+                bg="gray"
+                h="100px"
+                color="white"
+                width={"200px"}
+                height={"150px"}
+              >
+                Mikro
+              </Center>
+              <Flex
+                justifyContent={"space-between"}
+                my={"10px"}
+                alignItems={"center"}
+              >
+                <Button>-</Button>
+                <Text>0</Text>
+                <Button>+</Button>
+              </Flex>
+            </Box>
+          </Flex>
+        </Box>
+
+        {/* {select && (
+          <>
+            <Select onChange={(e) => setSelected(e.target.value)}>
+              <option value="">Select a product</option>
+              {inSpecList &&
+                inSpecList.map((is, i) => (
+                  <option value={is.Id}>
+                    {is.Id} {is.Name}
+                  </option>
+                ))}
+            </Select>
+          </>
+        )}
+        <Input
+          value={inspectionName}
+          onChange={(e) => setInspectionName(e.target.value)}
+          type="text"
+        /> */}
+
+        <Box flex={"1"}>
+          {/* <Button onClick={addNewList}>Lägg till rum</Button> */}
+
+          {/* <Flex>
+            {lists?.map((list, index) => (
+              <Card p={4} m={3} key={index}>
+                <h2>
+                  {list.name}
+                  <Button onClick={() => removeList(index)}>Ta bort rum</Button>
+                </h2>
+                {list.items.map((item, itemIndex) => (
+                  <Card p="3" m="1" key={itemIndex}>
+                    {item.name} - {item.volume} m3 . Antal {item.count}
+                    <Button onClick={() => removeItem(index, itemIndex)}>
+                      Ta bort
+                    </Button>
+                  </Card>
+                ))}
+                <p>
+                  Total volym:{" "}
+                  {list.items.reduce((acc, item) => acc + item.volume, 0)} m3
+                </p>
+                <Select
+                  value={selectedProductId}
+                  onChange={(event) => setSelectedProductId(event.target.value)}
+                >
+                  <option value="">Select a product</option>
+                  {products &&
+                    products.map((product, pi) => (
+                      <option value={product.id}>{product.name}</option>
+                    ))}
+                </Select>
+                <Button
+                  disabled={!selectedProductId}
+                  onClick={() => {
+                    addd(index, selectedProductId);
+                  }}
+                >
+                  Lägg till
+                </Button>
+              </Card>
+            ))}
+          </Flex> */}
+
+          <p>Total volume across all lists: {totalVolume} m3</p>
+          {create && <Button onClick={SaveInspection}>Spara</Button>}
+          {edit && <Button onClick={EditInspection}>Uppdatera</Button>}
+        </Box>
+        <Box>
+          <Card>Antal Lastbilar: {trucks}</Card>
+          <Card>Antal chafförer: {trucks}</Card>
+          <Card>Antal expressarbetare: {expressWorker}</Card>
+          <Card>Antal PackMästare: {packMaster}</Card>
+        </Box>
       </Box>
     </>
   );
