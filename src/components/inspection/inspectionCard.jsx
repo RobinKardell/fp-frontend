@@ -204,8 +204,10 @@ function InspectionCard(props) {
 
   const handleSaveRoomData = () => {
     const filterCountProduct = products.filter((product) => product.count > 0);
+    let isRoomIncludes = savedRooms.filter((r) => r.roomname.includes(optionValue))
+
     const roomData = {
-      roomname: optionValue,
+      roomname: isRoomIncludes.length > 0 ? `${optionValue} ${isRoomIncludes.length + 1}`  : optionValue,
       products: filterCountProduct,
     };
 
@@ -216,6 +218,11 @@ function InspectionCard(props) {
     setOptionValue("");
     setProducts(products.map((product) => ({ ...product, count: 0 })));
   };
+
+  const resetButton = () => {
+    setEditIndexID(null);
+    setProducts(products.map((product) => ({ ...product, count: 0 })));
+  }
 
   const handleEditProduct = (index) => {
     const selectedRoom = savedRooms[index];
@@ -295,10 +302,10 @@ function InspectionCard(props) {
             savedRooms.map((room, index) => (
               <Card
                 key={index}
-                border={"1px solid black"}
+                border={index === editIndexID ? "1px solid black" : ''}
                 onClick={() => handleEditProduct(index)}
                 padding={"10px"}
-                backgroundColor={room.index === editIndexID ? "black" : "white"}
+                
               >
                 {console.log("room.index", room.index)}
                 <Text fontSize="xl" fontWeight="bold">
@@ -342,10 +349,10 @@ function InspectionCard(props) {
               <Flex gap={"20px"}>
                 {/* <Button onClick={handleSaveUpdateProduct}>Save Room</Button> */}
                 <Button onClick={handleSaveUpdateProduct}>Save Room</Button>
+                <Button onClick={resetButton}>Reset</Button>
               </Flex>
               <Flex direction={{ base: "column", md: "row" }} gap={"20px"}>
                 <Button onClick={handleSaveRoomData}>Add Room</Button>
-                <Button>Reset</Button>
                 <Select
                   placeholder="Select Room"
                   onChange={(e) => setOptionValue(e.target.value)}
