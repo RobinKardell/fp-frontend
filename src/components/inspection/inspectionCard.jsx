@@ -15,23 +15,38 @@ import {
 import { set } from "date-fns/esm";
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import * as API from "../../api/api";
+import { id } from "date-fns/locale";
+import ProductList from "../ProductList";
 
 function InspectionCard(props) {
   const { volym, create, close, getList, edit, Eid, select } = props;
   const [inSpecList, setInspecList] = useState([]);
   const [selected, setSelected] = useState(0);
   const [totalV, setTotalV] = useState(0);
-  const [products, setProducts] = useState();
   const [inspectionName, setInspectionName] = useState("Besiktings underlag");
   const [selectedProductId, setSelectedProductId] = useState(0);
+  const [optionValue, setOptionValue] = useState("");
+  console.log("optionValue: ", optionValue);
   const [lists, setLists] = useState([]);
   const trucks = Math.ceil(totalV / 45);
   const expressWorker = Math.ceil(totalV / 50);
   const packMaster = Math.ceil(totalV / 25);
+  const [products, setProducts] = useState([]);
+  const [savedRooms, setSavedRooms] = useState([]);
+  const [editIndexID, setEditIndexID] = useState(null);
+
+  // const getProducts = async () => {
+  //   const response = await API.getThings();
+  //   setProducts(response.things);
+  // };
 
   const getProducts = async () => {
     const response = await API.getThings();
-    setProducts(response.things);
+    const updatedProducts = response.things.map((product) => ({
+      ...product,
+      count: 0,
+    }));
+    setProducts(updatedProducts);
   };
 
   const getInspecList = async () => {
@@ -39,8 +54,6 @@ function InspectionCard(props) {
     console.log("Response", response);
     setInspecList(response.data);
   };
-
-  // console.log("inSpecList", inSpecList);
 
   const getInspec = async () => {
     console.log("get");
@@ -59,7 +72,7 @@ function InspectionCard(props) {
     getProducts();
     select && getInspecList();
     edit && getInspec();
-  }, [products]);
+  }, []);
 
   useEffect(() => {
     selected && seted();
@@ -81,6 +94,7 @@ function InspectionCard(props) {
       return total;
     }, 0);
   }, [lists, create, edit, volym]);
+
   /*const totalVolume = lists && lists?.reduce((acc, list) => {
         const total = list && acc + list?.items?.reduce((total, item) => total + item.volume, 0);
         setTotalV(total);
@@ -160,6 +174,92 @@ function InspectionCard(props) {
     }
   };
 
+  const updateProduct = (index, type) => {
+    const productTemp = [...products];
+    if (type === "ADD") {
+      productTemp[index].count += 1;
+    } else {
+      productTemp[index].count -= 1;
+    }
+    setProducts(productTemp);
+  };
+
+  // const handleSaveRoomData = () => {
+  //   const filterCountProduct = products.filter((product) => product.count > 0);
+  //   const roomData = {
+  //     roomname: optionValue,
+  //     products: filterCountProduct,
+  //   };
+
+  //   // Reset count to 0 for all products
+  //   const updatedProducts = products.map((product) => ({
+  //     ...product,
+  //     count: 0,
+  //   }));
+
+  //   setSavedRooms([...savedRooms, roomData]);
+  //   setOptionValue("");
+  //   setProducts(updatedProducts);
+  // };
+
+  const handleSaveRoomData = () => {
+    const filterCountProduct = products.filter((product) => product.count > 0);
+    const roomData = {
+      roomname: optionValue,
+      products: filterCountProduct,
+    };
+
+    // Combine existing savedRooms and new roomData
+    const updatedRooms = [...savedRooms, roomData];
+
+    setSavedRooms(updatedRooms);
+    setOptionValue("");
+    setProducts(products.map((product) => ({ ...product, count: 0 })));
+  };
+
+  const handleEditProduct = (index) => {
+    const selectedRoom = savedRooms[index];
+    const updatedProducts = products.map((product) => {
+      const foundProduct = selectedRoom.products.find(
+        (p) => p.id === product.id
+      );
+      if (foundProduct) {
+        return { ...product, count: foundProduct.count };
+      }
+      return product;
+    });
+    setEditIndexID(index);
+    setProducts(updatedProducts);
+  };
+
+  // const handleSaveUpdateProduct = (index) => {
+  //   if (index !== null) {
+  //     const updatedRooms = [...savedRooms];
+  //     console.log("updatedRooms: ", updatedRooms);
+  //     const filterCountProduct = products.filter(
+  //       (product) => product.count > 0
+  //     );
+  //     const updatedRoom = {
+  //       roomname: optionValue,
+  //       products: filterCountProduct,
+  //     };
+  //     console.log("updatedRoom: ", updatedRoom);
+  //     updatedRooms[index] = updatedRoom;
+  //     setSavedRooms(updatedRooms);
+  //   }
+  // };
+
+  const handleSaveUpdateProduct = (index) => {
+    if (editIndexID !== null) {
+      const updatedRooms = [...savedRooms];
+      const filterCountProduct = products.filter(
+        (product) => product.count > 0
+      );
+      updatedRooms[editIndexID].products = filterCountProduct;
+      setSavedRooms(updatedRooms);
+    }
+  };
+
   const SaveInspection = () => {
     const data = { InspectionName: inspectionName, InspectionData: lists };
     const response = API.addInspection(data);
@@ -179,95 +279,46 @@ function InspectionCard(props) {
 
   return (
     <>
-      <Box
-        padding={"20px"}
-        // sx={{
-        //   "@media screen and (max-width: 1920px)": {
-        //     width: "500px",
-        //   },
-        // }}
-      >
+      <Box padding={"20px"}>
         <Heading>Besiktingsmall</Heading>
         <Text my={"10px"}>Sammanfattning</Text>
 
         {/* List Boxes */}
-        <Flex gap={"30px"} direction={{ base: "row", md: "row" }}>
-          <Box>
-            <Text fontSize="xl" fontWeight={"bold"}>
-              Kok
-            </Text>
-            <Text>1 Stolar</Text>
-            <Text>1 Kok</Text>
-            <Text>30 Kok</Text>
-          </Box>
-          <Box>
-            <Text fontSize="xl" fontWeight={"bold"}>
-              Kok
-            </Text>
-            <Text>1 Stolar</Text>
-            <Text>1 Kok</Text>
-            <Text>30 Kok</Text>
-          </Box>
-          <Box>
-            <Text fontSize="xl" fontWeight={"bold"}>
-              Kok
-            </Text>
-            <Text>1 Stolar</Text>
-            <Text>1 Kok</Text>
-            <Text>30 Kok</Text>
-          </Box>
-          <Box>
-            <Text fontSize="xl" fontWeight={"bold"}>
-              Kok
-            </Text>
-            <Text>1 Stolar</Text>
-            <Text>1 Kok</Text>
-            <Text>30 Kok</Text>
-          </Box>
+        <Flex gap={"20px"} sx={{ flexDirection: "row" }}>
+          {savedRooms.length === 0 ? (
+            <Box>
+              <Text fontSize="xl" fontWeight="bold">
+                No data Avalable
+              </Text>
+            </Box>
+          ) : (
+            savedRooms.map((room, index) => (
+              <Card
+                key={index}
+                border={"1px solid black"}
+                onClick={() => handleEditProduct(index)}
+                padding={"10px"}
+                backgroundColor={room.index === editIndexID ? "black" : "white"}
+              >
+                {console.log("room.index", room.index)}
+                <Text fontSize="xl" fontWeight="bold">
+                  {room.roomname}
+                </Text>
+                {room.products.map((product, productIndex) => (
+                  <Box key={productIndex}>
+                    {product.count > 0 && (
+                      <Text>
+                        {product.count} {product.name}
+                      </Text>
+                    )}
+                  </Box>
+                ))}
+              </Card>
+            ))
+          )}
         </Flex>
 
-        {/* Input and Image Upload */}
-        {/* <Flex
-          my={"10px"}
-          gap={"100px"}
-          alignItems={"center"}
-          // direction={{ base: "row", md: "column" }}
-        >
-          <Box>
-            <Text fontSize="md" fontWeight={"bold"}>
-              Totalt: 28m<sup>3</sup>
-            </Text>
-            <Flex
-              my={"10px"}
-              direction={{ base: "row", md: "column" }}
-              gap={"30px"}
-            >
-              <Flex gap={"20px"}>
-                <Button>Spare run</Button>
-                <Button>Spare run</Button>
-              </Flex>
-              <Flex direction={{ base: "row", md: "column" }}>
-                <Text
-                  borderTop={"1px solid black"}
-                  borderLeft={"1px solid black"}
-                  w={"auto"}
-                  pl={"10px"}
-                >
-                  Lagg till rum +
-                </Text>
-                <Select placeholder="Select option">
-                  <option value="option1">Option 1</option>
-                  <option value="option2">Option 2</option>
-                  <option value="option3">Option 3</option>
-                </Select>
-              </Flex>
-            </Flex>
-          </Box>
-          <Box>
-            <Input type="file" />
-          </Box>
-        </Flex> */}
-
+        {/* Save Button and Select Room */}
         <Flex
           my={"10px"}
           gap={"100px"}
@@ -289,19 +340,16 @@ function InspectionCard(props) {
               gap={"30px"}
             >
               <Flex gap={"20px"}>
-                <Button>Save Room</Button>
-                <Button>Spare run</Button>
+                {/* <Button onClick={handleSaveUpdateProduct}>Save Room</Button> */}
+                <Button onClick={handleSaveUpdateProduct}>Save Room</Button>
               </Flex>
               <Flex direction={{ base: "column", md: "row" }} gap={"20px"}>
-                <Text
-                  borderTop={"1px solid black"}
-                  borderLeft={"1px solid black"}
-                  w={"auto"}
-                  pl={"10px"}
+                <Button onClick={handleSaveRoomData}>Add Room</Button>
+                <Button>Reset</Button>
+                <Select
+                  placeholder="Select Room"
+                  onChange={(e) => setOptionValue(e.target.value)}
                 >
-                  Add Room +
-                </Text>
-                <Select placeholder="Select Room">
                   <option value="kok">kok</option>
                   <option value="vardagsrum">vardagsrum</option>
                   <option value="i lall">i lall</option>
@@ -318,96 +366,21 @@ function InspectionCard(props) {
 
         {/* Image Render Box */}
         <Box my={"25px"}>
-          <Flex
-            direction={"row"}
-            gap={{ base: "50px", md: "25px" }}
-            sx={{
-              "@media screen and (max-width: 768px)": {
-                flexDirection: "column", // Update flex direction for the md breakpoint
-              },
-            }}
-          >
-            <Box width={"200px"}>
-              <Center
-                bg="gray"
-                h="100px"
-                color="white"
-                width={"200px"}
-                height={"150px"}
-              >
-                Köksbord
-              </Center>
-              <Flex
-                justifyContent={"space-between"}
-                my={"10px"}
-                alignItems={"center"}
-              >
-                <Button>-</Button>
-                <Text>0</Text>
-                <Button>+</Button>
-              </Flex>
+          <Grid templateColumns="repeat(5, 1fr)" gap={6}>
+            <Box my={"25px"}>
+              <Grid templateColumns="repeat(5, 1fr)" gap={6}>
+                {products.map((product, index) => {
+                  return (
+                    <ProductList
+                      product={product}
+                      index={index}
+                      updateProduct={updateProduct}
+                    />
+                  );
+                })}
+              </Grid>
             </Box>
-            <Box width={"200px"}>
-              <Center
-                bg="gray"
-                h="100px"
-                color="white"
-                width={"200px"}
-                height={"150px"}
-              >
-                Stolar
-              </Center>
-              <Flex
-                justifyContent={"space-between"}
-                my={"10px"}
-                alignItems={"center"}
-              >
-                <Button>-</Button>
-                <Text>0</Text>
-                <Button>+</Button>
-              </Flex>
-            </Box>
-            <Box width={"200px"}>
-              <Center
-                bg="gray"
-                h="100px"
-                color="white"
-                width={"200px"}
-                height={"150px"}
-              >
-                Skåp
-              </Center>
-              <Flex
-                justifyContent={"space-between"}
-                my={"10px"}
-                alignItems={"center"}
-              >
-                <Button>-</Button>
-                <Text>0</Text>
-                <Button>+</Button>
-              </Flex>
-            </Box>
-            <Box width={"200px"}>
-              <Center
-                bg="gray"
-                h="100px"
-                color="white"
-                width={"200px"}
-                height={"150px"}
-              >
-                Mikro
-              </Center>
-              <Flex
-                justifyContent={"space-between"}
-                my={"10px"}
-                alignItems={"center"}
-              >
-                <Button>-</Button>
-                <Text>0</Text>
-                <Button>+</Button>
-              </Flex>
-            </Box>
-          </Flex>
+          </Grid>
         </Box>
 
         {/* {select && (
