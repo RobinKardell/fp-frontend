@@ -64,9 +64,6 @@ function Inspections() {
     setInspections(response.data);
   };
 
-  console.log("Eid: ", Eid);
-  console.log("inspections: ", inspections);
-
   useEffect(() => {
     getInspections();
   }, []);

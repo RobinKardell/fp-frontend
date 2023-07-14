@@ -13,7 +13,13 @@ import {
   Center,
 } from "@chakra-ui/react";
 import { set } from "date-fns/esm";
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import * as API from "../../api/api";
 import { id } from "date-fns/locale";
 import ProductList from "../ProductList";
@@ -26,7 +32,6 @@ function InspectionCard(props) {
   const [inspectionName, setInspectionName] = useState("Besiktings underlag");
   const [selectedProductId, setSelectedProductId] = useState(0);
   const [optionValue, setOptionValue] = useState("");
-  console.log("optionValue: ", optionValue);
   const [lists, setLists] = useState([]);
   const trucks = Math.ceil(totalV / 45);
   const expressWorker = Math.ceil(totalV / 50);
@@ -34,12 +39,8 @@ function InspectionCard(props) {
   const [products, setProducts] = useState([]);
   const [savedRooms, setSavedRooms] = useState([]);
   const [editIndexID, setEditIndexID] = useState(null);
-
-  // const getProducts = async () => {
-  //   const response = await API.getThings();
-  //   setProducts(response.things);
-  // };
-
+  const [uploadImages, setuUploadImages] = useState([]);
+  const fileInputRef = useRef(null);
   const getProducts = async () => {
     const response = await API.getThings();
     const updatedProducts = response.things.map((product) => ({
@@ -79,10 +80,10 @@ function InspectionCard(props) {
   }, [selected]);
 
   /* useEffect(() => {
-        if (selected !== 0) {
-          seted();
-        }
-      }, [selected])*/
+          if (selected !== 0) {
+            seted();
+          }
+        }, [selected])*/
 
   const totalVolume = useMemo(() => {
     return lists?.reduce((acc, list) => {
@@ -96,25 +97,25 @@ function InspectionCard(props) {
   }, [lists, create, edit, volym]);
 
   /*const totalVolume = lists && lists?.reduce((acc, list) => {
-        const total = list && acc + list?.items?.reduce((total, item) => total + item.volume, 0);
-        setTotalV(total);
-        (!create && !edit ) && volym(total)
-        return total;
-    }, 0);*/
+          const total = list && acc + list?.items?.reduce((total, item) => total + item.volume, 0);
+          setTotalV(total);
+          (!create && !edit ) && volym(total)
+          return total;
+      }, 0);*/
 
   /*const addNewList = () => {
-        const length = lists ? lists.length : 0;
-        const newlist = [{ name: 'List ' + length, items: [] }]
-        lists && newlist.push(...lists)
-        setLists(newlist)
-    }
-    
-    const addNewList = () => {
-        const length = lists ? lists.length : 0;
-        const newlist = [{ name: 'List ' + length, items: [] }];
-        lists && newlist.push(...lists);
-        setLists(newlist);
-    }*/
+          const length = lists ? lists.length : 0;
+          const newlist = [{ name: 'List ' + length, items: [] }]
+          lists && newlist.push(...lists)
+          setLists(newlist)
+      }
+      
+      const addNewList = () => {
+          const length = lists ? lists.length : 0;
+          const newlist = [{ name: 'List ' + length, items: [] }];
+          lists && newlist.push(...lists);
+          setLists(newlist);
+      }*/
 
   const addNewList = useCallback(() => {
     const length = lists ? lists.length : 0;
@@ -204,25 +205,31 @@ function InspectionCard(props) {
 
   const handleSaveRoomData = () => {
     const filterCountProduct = products.filter((product) => product.count > 0);
-    let isRoomIncludes = savedRooms.filter((r) => r.roomname.includes(optionValue))
-
+    let isRoomIncludes = savedRooms.filter((r) =>
+      r.roomname.includes(optionValue)
+    );
     const roomData = {
-      roomname: isRoomIncludes.length > 0 ? `${optionValue} ${isRoomIncludes.length + 1}`  : optionValue,
+      roomname:
+        isRoomIncludes.length > 0
+          ? `${optionValue} ${isRoomIncludes.length + 1}`
+          : optionValue,
       products: filterCountProduct,
+      images: uploadImages,
     };
-
-    // Combine existing savedRooms and new roomData
     const updatedRooms = [...savedRooms, roomData];
-
     setSavedRooms(updatedRooms);
     setOptionValue("");
     setProducts(products.map((product) => ({ ...product, count: 0 })));
+    setuUploadImages([]);
+    fileInputRef.current.value = "";
   };
+  console.log("savedRooms", savedRooms);
 
   const resetButton = () => {
     setEditIndexID(null);
     setProducts(products.map((product) => ({ ...product, count: 0 })));
-  }
+    setuUploadImages([]);
+  };
 
   const handleEditProduct = (index) => {
     const selectedRoom = savedRooms[index];
@@ -239,23 +246,6 @@ function InspectionCard(props) {
     setProducts(updatedProducts);
   };
 
-  // const handleSaveUpdateProduct = (index) => {
-  //   if (index !== null) {
-  //     const updatedRooms = [...savedRooms];
-  //     console.log("updatedRooms: ", updatedRooms);
-  //     const filterCountProduct = products.filter(
-  //       (product) => product.count > 0
-  //     );
-  //     const updatedRoom = {
-  //       roomname: optionValue,
-  //       products: filterCountProduct,
-  //     };
-  //     console.log("updatedRoom: ", updatedRoom);
-  //     updatedRooms[index] = updatedRoom;
-  //     setSavedRooms(updatedRooms);
-  //   }
-  // };
-
   const handleSaveUpdateProduct = (index) => {
     if (editIndexID !== null) {
       const updatedRooms = [...savedRooms];
@@ -267,12 +257,48 @@ function InspectionCard(props) {
     }
   };
 
+  const handleImageUpload = (e) => {
+    const files = Array.from(e.target.files);
+    const promises = files.map((file) => {
+      return convertImageToBase64(file)
+        .then((base64data) => {
+          return base64data;
+        })
+        .catch((error) => {
+          console.log("Error converting image to base64:", error);
+          return null;
+        });
+    });
+
+    Promise.all(promises)
+      .then((base64Images) => {
+        const filteredImages = base64Images.filter((image) => image !== null);
+        setuUploadImages((prevImages) => [...prevImages, ...filteredImages]);
+      })
+      .catch((error) => {
+        console.log("Error uploading images:", error);
+      });
+  };
+
+  console.log("Uploaded Images", uploadImages);
+
+  function convertImageToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  }
+
   const SaveInspection = () => {
-    const data = { InspectionName: inspectionName, InspectionData: lists };
+    const data = { InspectionName: inspectionName, InspectionData: savedRooms };
+    console.log("data: ", data);
     const response = API.addInspection(data);
     getList();
     close();
   };
+
   const EditInspection = () => {
     const data = {
       Id: Eid,
@@ -302,12 +328,10 @@ function InspectionCard(props) {
             savedRooms.map((room, index) => (
               <Card
                 key={index}
-                border={index === editIndexID ? "1px solid black" : ''}
+                border={index === editIndexID ? "1px solid black" : ""}
                 onClick={() => handleEditProduct(index)}
                 padding={"10px"}
-                
               >
-                {console.log("room.index", room.index)}
                 <Text fontSize="xl" fontWeight="bold">
                   {room.roomname}
                 </Text>
@@ -347,12 +371,11 @@ function InspectionCard(props) {
               gap={"30px"}
             >
               <Flex gap={"20px"}>
-                {/* <Button onClick={handleSaveUpdateProduct}>Save Room</Button> */}
                 <Button onClick={handleSaveUpdateProduct}>Save Room</Button>
                 <Button onClick={resetButton}>Reset</Button>
+                <Button onClick={handleSaveRoomData}>Add Room</Button>
               </Flex>
               <Flex direction={{ base: "column", md: "row" }} gap={"20px"}>
-                <Button onClick={handleSaveRoomData}>Add Room</Button>
                 <Select
                   placeholder="Select Room"
                   onChange={(e) => setOptionValue(e.target.value)}
@@ -367,7 +390,23 @@ function InspectionCard(props) {
             </Flex>
           </Box>
           <Box>
-            <Input type="file" />
+            <Input
+              type="file"
+              onChange={(e) => handleImageUpload(e)}
+              ref={fileInputRef}
+            />
+            {editIndexID !== null && (
+              <Flex my={"10px"} wrap={"wrap"} gap={2}>
+                {savedRooms[editIndexID].images.map((image, index) => (
+                  <Image
+                    key={index}
+                    src={image}
+                    alt={`Image ${index}`}
+                    boxSize="100px"
+                  />
+                ))}
+              </Flex>
+            )}
           </Box>
         </Flex>
 
@@ -391,67 +430,66 @@ function InspectionCard(props) {
         </Box>
 
         {/* {select && (
-          <>
-            <Select onChange={(e) => setSelected(e.target.value)}>
-              <option value="">Select a product</option>
-              {inSpecList &&
-                inSpecList.map((is, i) => (
-                  <option value={is.Id}>
-                    {is.Id} {is.Name}
-                  </option>
-                ))}
-            </Select>
-          </>
-        )}
-        <Input
-          value={inspectionName}
-          onChange={(e) => setInspectionName(e.target.value)}
-          type="text"
-        /> */}
+            <>
+              <Select onChange={(e) => setSelected(e.target.value)}>
+                <option value="">Select a product</option>
+                {inSpecList &&
+                  inSpecList.map((is, i) => (
+                    <option value={is.Id}>
+                      {is.Id} {is.Name}
+                    </option>
+                  ))}
+              </Select>
+            </>
+          )}
+          <Input
+            value={inspectionName}
+            onChange={(e) => setInspectionName(e.target.value)}
+            type="text"
+          /> */}
 
         <Box flex={"1"}>
           {/* <Button onClick={addNewList}>Lägg till rum</Button> */}
-
           {/* <Flex>
-            {lists?.map((list, index) => (
-              <Card p={4} m={3} key={index}>
-                <h2>
-                  {list.name}
-                  <Button onClick={() => removeList(index)}>Ta bort rum</Button>
-                </h2>
-                {list.items.map((item, itemIndex) => (
-                  <Card p="3" m="1" key={itemIndex}>
-                    {item.name} - {item.volume} m3 . Antal {item.count}
-                    <Button onClick={() => removeItem(index, itemIndex)}>
-                      Ta bort
-                    </Button>
-                  </Card>
-                ))}
-                <p>
-                  Total volym:{" "}
-                  {list.items.reduce((acc, item) => acc + item.volume, 0)} m3
-                </p>
-                <Select
-                  value={selectedProductId}
-                  onChange={(event) => setSelectedProductId(event.target.value)}
-                >
-                  <option value="">Select a product</option>
-                  {products &&
-                    products.map((product, pi) => (
-                      <option value={product.id}>{product.name}</option>
-                    ))}
-                </Select>
-                <Button
-                  disabled={!selectedProductId}
-                  onClick={() => {
-                    addd(index, selectedProductId);
-                  }}
-                >
-                  Lägg till
-                </Button>
-              </Card>
-            ))}
-          </Flex> */}
+              {lists?.map((list, index) => (
+                <Card p={4} m={3} key={index}>
+                  <h2>
+                    {list.name}
+                    <Button onClick={() => removeList(index)}>Ta bort rum</Button>
+                  </h2>
+                  {list.items.map((item, itemIndex) => (
+                    <Card p="3" m="1" key={itemIndex}>
+                      {item.name} - {item.volume} m3 . Antal {item.count}
+                      <Button onClick={() => removeItem(index, itemIndex)}>
+                        Ta bort
+                      </Button>
+                    </Card>
+                  ))}
+                  <p>
+                    Total volym:{" "}
+                    {list.items.reduce((acc, item) => acc + item.volume, 0)} m3
+                  </p>
+                  <Select
+                    value={selectedProductId}
+                    onChange={(event) => setSelectedProductId(event.target.value)}
+                  >
+                    <option value="">Select a product</option>
+                    {products &&
+                      products.map((product, pi) => (
+                        <option value={product.id}>{product.name}</option>
+                      ))}
+                  </Select>
+                  <Button
+                    disabled={!selectedProductId}
+                    onClick={() => {
+                      addd(index, selectedProductId);
+                    }}
+                  >
+                    Lägg till
+                  </Button>
+                </Card>
+              ))}
+            </Flex> */}
 
           <p>Total volume across all lists: {totalVolume} m3</p>
           {create && <Button onClick={SaveInspection}>Spara</Button>}
