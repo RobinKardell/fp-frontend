@@ -325,7 +325,13 @@ function InspectionCard(props) {
         <Text my={"10px"}>Sammanfattning</Text>
 
         {/* List Boxes */}
-        <Flex gap={"20px"} sx={{ flexDirection: "row" }}>
+        <Flex gap={"20px"} sx={{ 
+          flexDirection: "row" ,
+          flexWrap:"wrap"
+          // "@media screen and (max-width: 768px)":{
+          //   flexDirection: "column",
+          // },
+          }} md={{}} >
           {savedRooms.length === 0 ? (
             <Box>
               <Text fontSize="xl" fontWeight="bold">
@@ -339,6 +345,7 @@ function InspectionCard(props) {
                 border={index === editIndexID ? "1px solid black" : ""}
                 onClick={() => handleEditProduct(index)}
                 padding={"10px"}
+                minWidth={"100px"}
               >
                 <Text fontSize="xl" fontWeight="bold">
                   {room.roomname}
