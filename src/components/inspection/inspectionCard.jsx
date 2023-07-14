@@ -11,6 +11,7 @@ import {
   Grid,
   GridItem,
   Center,
+  SimpleGrid,
 } from "@chakra-ui/react";
 import { set } from "date-fns/esm";
 import React, {
@@ -205,9 +206,13 @@ function InspectionCard(props) {
 
   const handleSaveRoomData = () => {
     const filterCountProduct = products.filter((product) => product.count > 0);
+    if(!optionValue|| filterCountProduct.length === 0){
+      return false;
+    }
     let isRoomIncludes = savedRooms.filter((r) =>
       r.roomname.includes(optionValue)
     );
+    let findRoom = savedRooms.findIndex((r) => r.roomname === optionValue);
     const roomData = {
       roomname:
         isRoomIncludes.length > 0
@@ -217,6 +222,9 @@ function InspectionCard(props) {
       images: uploadImages,
     };
     const updatedRooms = [...savedRooms, roomData];
+    if(findRoom >= 0){
+      updatedRooms[findRoom].roomname = `${updatedRooms[findRoom].roomname} 1`
+    }
     setSavedRooms(updatedRooms);
     setOptionValue("");
     setProducts(products.map((product) => ({ ...product, count: 0 })));
@@ -380,11 +388,11 @@ function InspectionCard(props) {
                   placeholder="Select Room"
                   onChange={(e) => setOptionValue(e.target.value)}
                 >
-                  <option value="kok">kok</option>
-                  <option value="vardagsrum">vardagsrum</option>
-                  <option value="i lall">i lall</option>
-                  <option value="sovrum">sovrum</option>
-                  <option value="kallare">kallare</option>
+                  <option value="kok" selected={optionValue === 'kok'}>kok</option>
+                  <option value="vardagsrum" selected={optionValue === 'vardagsrum'}>vardagsrum</option>
+                  <option value="i lall" selected={optionValue === 'i lall'}>i lall</option>
+                  <option value="sovrum" selected={optionValue === 'sovrum'}>sovrum</option>
+                  <option value="kallare" selected={optionValue === 'kallare'}>kallare</option>
                 </Select>
               </Flex>
             </Flex>
@@ -395,9 +403,8 @@ function InspectionCard(props) {
               onChange={(e) => handleImageUpload(e)}
               ref={fileInputRef}
             />
-            {editIndexID !== null && (
               <Flex my={"10px"} wrap={"wrap"} gap={2}>
-                {savedRooms[editIndexID].images.map((image, index) => (
+                {uploadImages.map((image, index) => (
                   <Image
                     key={index}
                     src={image}
@@ -406,15 +413,12 @@ function InspectionCard(props) {
                   />
                 ))}
               </Flex>
-            )}
           </Box>
         </Flex>
 
         {/* Image Render Box */}
-        <Box my={"25px"}>
-          <Grid templateColumns="repeat(5, 1fr)" gap={6}>
             <Box my={"25px"}>
-              <Grid templateColumns="repeat(5, 1fr)" gap={6}>
+            <SimpleGrid minChildWidth='200px' spacing='40px'>
                 {products.map((product, index) => {
                   return (
                     <ProductList
@@ -424,10 +428,8 @@ function InspectionCard(props) {
                     />
                   );
                 })}
-              </Grid>
+              </SimpleGrid>
             </Box>
-          </Grid>
-        </Box>
 
         {/* {select && (
             <>

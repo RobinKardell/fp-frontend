@@ -3,13 +3,11 @@ import React from "react";
 
 const ProductList = ({ product, index, updateProduct }) => {
   return (
-    <GridItem key={product.id}>
-      <Box width={"200px"}>
+      <Box>
         <Center
           bg="gray"
           h="100px"
           color="white"
-          width={"200px"}
           height={"150px"}
         >
           {product.name}
@@ -29,7 +27,6 @@ const ProductList = ({ product, index, updateProduct }) => {
           <Button onClick={() => updateProduct(index, "ADD")}>+</Button>
         </Flex>
       </Box>
-    </GridItem>
   );
 };
 
