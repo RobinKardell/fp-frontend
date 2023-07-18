@@ -58,6 +58,7 @@ function Inspections() {
   } = useDisclosure();
 
   const [inspections, setInspections] = useState();
+  const [inspection, setInspection] = useState();
 
   const getInspections = async () => {
     const response = await API.getInspectionList();
@@ -103,6 +104,7 @@ function Inspections() {
                           onClick={() => {
                             setEid(inspection.Id);
                             viewInspectionOnOpen();
+                            console.log("EID", inspection.Id);
                           }}
                         >
                           {inspection.Name}
@@ -140,7 +142,7 @@ function Inspections() {
       </Modal>
       <Modal isOpen={viewInspectionIsOpen} onClose={viewInspectionOnClose}>
         <ModalOverlay />
-        <ModalContent bgColor={"gray"} size={"full"}>
+        <ModalContent bg="white" size="full" width={"100%"}>
           <ModalHeader>Visa en Besiktning</ModalHeader>
           <ModalCloseButton />
           <ModalBody>

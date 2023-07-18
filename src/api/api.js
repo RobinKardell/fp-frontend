@@ -16,6 +16,13 @@ export function createUser(data) {
   const url = "/createUser";
   return instance.post(url, data).then((response) => response.data);
 }
+
+export function stillloggedin() {
+  setTokenHeader(localStorage.getItem("token"));
+  let url = "/stillloggedin";
+  return instance.post(url).then((response) => response.data);
+}
+
 //gets all postions
 export function getTeams() {
   setTokenHeader(localStorage.getItem("token"));

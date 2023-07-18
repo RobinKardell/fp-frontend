@@ -62,6 +62,7 @@ function InspectionCard(props) {
     const response = await API.getInspection(Eid);
     setInspectionName(response.Name);
     setLists(response.data);
+    setSavedRooms(response.data);
   };
 
   const seted = async () => {
@@ -206,7 +207,7 @@ function InspectionCard(props) {
 
   const handleSaveRoomData = () => {
     const filterCountProduct = products.filter((product) => product.count > 0);
-    if(!optionValue|| filterCountProduct.length === 0){
+    if (!optionValue || filterCountProduct.length === 0) {
       return false;
     }
     let isRoomIncludes = savedRooms.filter((r) =>
@@ -222,8 +223,8 @@ function InspectionCard(props) {
       images: uploadImages,
     };
     const updatedRooms = [...savedRooms, roomData];
-    if(findRoom >= 0){
-      updatedRooms[findRoom].roomname = `${updatedRooms[findRoom].roomname} 1`
+    if (findRoom >= 0) {
+      updatedRooms[findRoom].roomname = `${updatedRooms[findRoom].roomname} 1`;
     }
     setSavedRooms(updatedRooms);
     setOptionValue("");
@@ -231,7 +232,6 @@ function InspectionCard(props) {
     setuUploadImages([]);
     fileInputRef.current.value = "";
   };
-  console.log("savedRooms", savedRooms);
 
   const resetButton = () => {
     setEditIndexID(null);
@@ -288,8 +288,6 @@ function InspectionCard(props) {
       });
   };
 
-  console.log("Uploaded Images", uploadImages);
-
   function convertImageToBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -301,7 +299,6 @@ function InspectionCard(props) {
 
   const SaveInspection = () => {
     const data = { InspectionName: inspectionName, InspectionData: savedRooms };
-    console.log("data: ", data);
     const response = API.addInspection(data);
     getList();
     close();
@@ -311,8 +308,9 @@ function InspectionCard(props) {
     const data = {
       Id: Eid,
       InspectionName: inspectionName,
-      InspectionData: lists,
+      InspectionData: savedRooms,
     };
+    console.log("Edit inspection".data);
     const response = API.editInspection(data);
     getList();
     close();
@@ -320,18 +318,22 @@ function InspectionCard(props) {
 
   return (
     <>
-      <Box padding={"20px"}>
+      <Box>
         <Heading>Besiktingsmall</Heading>
         <Text my={"10px"}>Sammanfattning</Text>
 
         {/* List Boxes */}
-        <Flex gap={"20px"} sx={{ 
-          flexDirection: "row" ,
-          flexWrap:"wrap"
-          // "@media screen and (max-width: 768px)":{
-          //   flexDirection: "column",
-          // },
-          }} md={{}} >
+        <Flex
+          gap={"20px"}
+          sx={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            // "@media screen and (max-width: 768px)":{
+            //   flexDirection: "column",
+            // },
+          }}
+          md={{}}
+        >
           {savedRooms.length === 0 ? (
             <Box>
               <Text fontSize="xl" fontWeight="bold">
@@ -370,6 +372,7 @@ function InspectionCard(props) {
           gap={"100px"}
           alignItems={"center"}
           direction={"row"}
+          flexWrap={"wrap"}
           sx={{
             "@media screen and (max-width: 768px)": {
               flexDirection: "column",
@@ -383,7 +386,7 @@ function InspectionCard(props) {
             <Flex
               my={"10px"}
               direction={{ base: "column", md: "row" }}
-              gap={"30px"}
+              gap={"5px"}
             >
               <Flex gap={"20px"}>
                 <Button onClick={handleSaveUpdateProduct}>Save Room</Button>
@@ -395,11 +398,24 @@ function InspectionCard(props) {
                   placeholder="Select Room"
                   onChange={(e) => setOptionValue(e.target.value)}
                 >
-                  <option value="kok" selected={optionValue === 'kok'}>kok</option>
-                  <option value="vardagsrum" selected={optionValue === 'vardagsrum'}>vardagsrum</option>
-                  <option value="i lall" selected={optionValue === 'i lall'}>i lall</option>
-                  <option value="sovrum" selected={optionValue === 'sovrum'}>sovrum</option>
-                  <option value="kallare" selected={optionValue === 'kallare'}>kallare</option>
+                  <option value="kok" selected={optionValue === "kok"}>
+                    kok
+                  </option>
+                  <option
+                    value="vardagsrum"
+                    selected={optionValue === "vardagsrum"}
+                  >
+                    vardagsrum
+                  </option>
+                  <option value="i lall" selected={optionValue === "i lall"}>
+                    i lall
+                  </option>
+                  <option value="sovrum" selected={optionValue === "sovrum"}>
+                    sovrum
+                  </option>
+                  <option value="kallare" selected={optionValue === "kallare"}>
+                    kallare
+                  </option>
                 </Select>
               </Flex>
             </Flex>
@@ -410,33 +426,33 @@ function InspectionCard(props) {
               onChange={(e) => handleImageUpload(e)}
               ref={fileInputRef}
             />
-              <Flex my={"10px"} wrap={"wrap"} gap={2}>
-                {uploadImages.map((image, index) => (
-                  <Image
-                    key={index}
-                    src={image}
-                    alt={`Image ${index}`}
-                    boxSize="100px"
-                  />
-                ))}
-              </Flex>
+            <Flex my={"10px"} wrap={"wrap"} gap={2}>
+              {uploadImages.map((image, index) => (
+                <Image
+                  key={index}
+                  src={image}
+                  alt={`Image ${index}`}
+                  boxSize="100px"
+                />
+              ))}
+            </Flex>
           </Box>
         </Flex>
 
         {/* Image Render Box */}
-            <Box my={"25px"}>
-            <SimpleGrid minChildWidth='200px' spacing='40px'>
-                {products.map((product, index) => {
-                  return (
-                    <ProductList
-                      product={product}
-                      index={index}
-                      updateProduct={updateProduct}
-                    />
-                  );
-                })}
-              </SimpleGrid>
-            </Box>
+        <Box my={"25px"}>
+          <SimpleGrid minChildWidth="200px" spacing="40px">
+            {products.map((product, index) => {
+              return (
+                <ProductList
+                  product={product}
+                  index={index}
+                  updateProduct={updateProduct}
+                />
+              );
+            })}
+          </SimpleGrid>
+        </Box>
 
         {/* {select && (
             <>
