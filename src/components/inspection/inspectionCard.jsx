@@ -58,7 +58,6 @@ function InspectionCard(props) {
   };
 
   const getInspec = async () => {
-    console.log("get");
     const response = await API.getInspection(Eid);
     setInspectionName(response.Name);
     setLists(response.data);
@@ -310,7 +309,6 @@ function InspectionCard(props) {
       InspectionName: inspectionName,
       InspectionData: savedRooms,
     };
-    console.log("Edit inspection".data);
     const response = API.editInspection(data);
     getList();
     close();

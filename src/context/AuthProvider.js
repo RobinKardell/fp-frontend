@@ -17,7 +17,6 @@ export const AuthProvider = ({ children }) => {
     if (authData) {
       const fetchUser = async () => {
         const response = await API.stillloggedin();
-        console.log("response: ", response);
         if (response.status === true) {
           setAuth(authData);
         }
