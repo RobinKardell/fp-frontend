@@ -1,9 +1,8 @@
-import { Box, Flex, Image, Stack, Text } from '@chakra-ui/react'
-import React from 'react'
-import LoginForm from '../components/login/login.form';
+import { Box, Flex, Image, Stack, Text } from "@chakra-ui/react";
+import React from "react";
+import LoginForm from "../components/login/login.form";
 
 function Login() {
-
   return (
     <Flex
       minH="100vh"
@@ -23,16 +22,25 @@ function Login() {
         p="8"
       >
         <Flex mb="4" justifyContent={"center"}>
-          <Image height={"70%"} src="./FlyttPoolen_logo_orange_flag_right.png" />
+          <Image
+            height={"70%"}
+            src="./FlyttPoolen_logo_orange_flag_right.png"
+          />
         </Flex>
-
         <Stack>
-          <LoginForm/>
+          <LoginForm />
         </Stack>
       </Box>
-      <Text textColor="purple" fontWeight="semibold" position="absolute" bottom="1">Skapad av Webvancy AB</Text>
+      <Text
+        textColor="purple"
+        fontWeight="semibold"
+        position="absolute"
+        bottom="1"
+      >
+        Skapad av Webvancy AB
+      </Text>
     </Flex>
-  )
+  );
 }
 
-export default Login
+export default Login;

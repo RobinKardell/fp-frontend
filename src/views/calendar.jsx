@@ -1,10 +1,10 @@
-import { Box, Flex, Heading, useColorModeValue } from '@chakra-ui/react'
-import FullCalendar from '@fullcalendar/react'
-import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid';
-import svLocale from '@fullcalendar/core/locales/sv';
-import React, { useEffect } from 'react'
+import { Box, Flex, Heading, useColorModeValue } from "@chakra-ui/react";
+import FullCalendar from "@fullcalendar/react";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import svLocale from "@fullcalendar/core/locales/sv";
+import React, { useEffect } from "react";
 
 function Calendar() {
   const axiosPrivate = useAxiosPrivate();
@@ -17,20 +17,23 @@ function Calendar() {
         </Heading>
       </Flex>
 
-      <Box flex="1" borderColor="gray.100" borderWidth="3px" borderStyle="solid" rounded="xl">
+      <Box
+        flex="1"
+        borderColor="gray.100"
+        borderWidth="3px"
+        borderStyle="solid"
+        rounded="xl"
+      >
         <Box
-          bg={useColorModeValue('gray.100', 'gray.800')}
+          bg={useColorModeValue("gray.100", "gray.800")}
           px={{
-            base: '6',
-            md: '8',
+            base: "6",
+            md: "8",
           }}
           h="full"
           py="4"
         >
-          <Box
-            as="section"
-            mx="auto"
-          >
+          <Box as="section" mx="auto">
             <FullCalendar
               plugins={[timeGridPlugin]}
               locales={[svLocale]}
@@ -44,7 +47,7 @@ function Calendar() {
         </Box>
       </Box>
     </Flex>
-  )
+  );
 }
 
-export default Calendar
+export default Calendar;
