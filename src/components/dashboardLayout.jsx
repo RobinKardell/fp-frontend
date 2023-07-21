@@ -110,7 +110,6 @@ const DashboardLayout = () => {
                 />
               </Flex>
             </Box>
-
             {/* Hamburger menu for mobile */}
             {isMobile ? (
               <IconButton
@@ -122,7 +121,6 @@ const DashboardLayout = () => {
                 background="transparent"
               />
             ) : null}
-
             {/* Navigation links for large screens */}
             <Flex alignItems="center" display={{ base: "none", md: "flex" }}>
               {roleId === ROLES.Admin && (
@@ -230,7 +228,6 @@ const DashboardLayout = () => {
             </Flex>
           </Flex>
         </Box>
-
         {/* Sidebar for mobile */}
         <Drawer placement="left" onClose={onToggle} isOpen={isOpen}>
           <DrawerOverlay />
@@ -405,7 +402,6 @@ const DashboardLayout = () => {
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
-
         <Box bg={mode("lightgray")} overflow={"auto"} height={"100%"}>
           <Outlet />
         </Box>
