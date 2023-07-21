@@ -55,7 +55,7 @@ const HistoryTable = ({ isOpen, toggle, setHistoryData }) => {
         <ModalCloseButton />
         <ModalBody display="flex" flexDirection="column" gap={2} mx="auto">
           <FormControl>
-            <FormLabel>title</FormLabel>
+            <FormLabel>Title</FormLabel>
             <Input
               w="auto"
               name="title"
@@ -64,7 +64,7 @@ const HistoryTable = ({ isOpen, toggle, setHistoryData }) => {
             />
           </FormControl>
           <FormControl>
-            <FormLabel>person</FormLabel>
+            <FormLabel>Person</FormLabel>
             <Input
               w="auto"
               name="person"
@@ -73,7 +73,7 @@ const HistoryTable = ({ isOpen, toggle, setHistoryData }) => {
             />
           </FormControl>
           <FormControl>
-            <FormLabel>coWorker</FormLabel>
+            <FormLabel>Co Worker</FormLabel>
             <Input
               w="auto"
               name="coWorker"
@@ -82,7 +82,7 @@ const HistoryTable = ({ isOpen, toggle, setHistoryData }) => {
             />
           </FormControl>
           <FormControl>
-            <FormLabel>summary</FormLabel>
+            <FormLabel>Summary</FormLabel>
             <Input
               w="auto"
               name="summary"
@@ -91,7 +91,7 @@ const HistoryTable = ({ isOpen, toggle, setHistoryData }) => {
             />
           </FormControl>
           <FormControl>
-            <FormLabel>history</FormLabel>
+            <FormLabel>History</FormLabel>
             <Input
               w="auto"
               name="history"
@@ -100,7 +100,7 @@ const HistoryTable = ({ isOpen, toggle, setHistoryData }) => {
             />
           </FormControl>
           <FormControl>
-            <FormLabel>newHistory</FormLabel>
+            <FormLabel>New History</FormLabel>
             <Input
               w="auto"
               name="newHistory"
@@ -109,7 +109,7 @@ const HistoryTable = ({ isOpen, toggle, setHistoryData }) => {
             />
           </FormControl>
           <FormControl>
-            <FormLabel>currentDate</FormLabel>
+            <FormLabel>Current Date</FormLabel>
             <Input
               w="auto"
               name="currentDate"
